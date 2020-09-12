@@ -44,12 +44,14 @@ def deltaTest(delta, a, b):
     return S
 
 
+####################################################################################################
+
 # récupération de a, b et c (sous forme de tuple)
 def userVar():
     var = ['a', 'b', 'c']
     inputs = ()
     for i in var:
-        inputs += (int(input(f'Valeur de {i} :\n> ')),)
+        inputs += (float(input(f'Valeur de {i} :\n> ')),)
     return inputs
 
 
@@ -58,13 +60,6 @@ def formatResult(result, charList):
     for i in charList:
         result = result.replace(i, "")
     return result
-
-# affichage du résultat
-def main(a, b, c):
-    charList = ["(", ")"]
-    delta = deltaCatch(a, b, c)
-    S = formatResult(str(deltaTest(delta, a, b)), charList)
-    print(f'S = {{{S}}}')
 
 # affichage du tableau de variation
 def tkVariationTable(a, b, c, alpha, beta):
@@ -155,16 +150,70 @@ def tkVariationTable(a, b, c, alpha, beta):
     variationTable.pack(side=LEFT)
     window.mainloop()
 
+####################################################################################################
 
-tupleValues = userVar() # récupération d'un tuple contenant a, b, c
-# on sort les valeurs du tuple
-a = tupleValues[0]
-b = tupleValues[1]
-c = tupleValues[2]
+def main(a, b, c):
+    alpha = alpaCatch(a, b)
+    beta = betaCatch(a, b, c, alpha)
+    charList = ["(", ")"]
+    delta = deltaCatch(a, b, c)
+    S = formatResult(str(deltaTest(delta, a, b)), charList)
+    print(f'S = {{{S}}}')
+    tkVariationTable(a, b, c, alpha, beta) # tableau de variation
 
-alpha = alpaCatch(a, b)
-beta = betaCatch(a, b, c, alpha)
-main(a, b, c) # résoltion de l'équation
-tkVariationTable(a, b, c, alpha, beta) # tableau de variation
+####################################################################################################
 
+#récupération des données utlisateurs
+def tkWIndow():
+    spinboxs = []
+
+    def getNumbers():
+        window.quit()
+        A = str(a.get())
+        B = str(b.get())
+        C = str(c.get())
+        print(f'A : {A} | B : {B} | C : {C}')
+        main(float(A), float(B), float(C))
+
+    def aInput():
+        aValue = IntVar()
+        aValue.set(0)
+        Label(l, text="a = ").grid(row=1, column=1)
+        global a
+        a = Spinbox(l, from_=-32767, to=32767, textvariable=aValue, justify='center')
+        a.grid(row=1, column=2)
+        spinboxs.append(a)
+
+    def bInput():
+        bValue = IntVar()
+        bValue.set(0)
+        Label(l, text="b = ").grid(row=2, column=1)
+        global b
+        b = Spinbox(l, from_=-32767, to=32767, textvariable=bValue, justify='center')
+        b.grid(row=2, column=2)
+        spinboxs.append(b)
+
+    def cInput():
+        cValue = IntVar()
+        cValue.set(0)
+        Label(l, text="c = ").grid(row=3, column=1)
+        global c
+        c = Spinbox(l, from_=-32767, to=32767, textvariable=cValue, justify='center')
+        c.grid(row=3, column=2)
+        spinboxs.append(c)
+
+    def sendButton():
+        bouton = Button(window, text="Valider", command=getNumbers)
+        bouton.pack()
+
+    window = Tk()
+    l = LabelFrame(window, text="Equation de la forme ax²+bx+c dans R", padx=20, pady=20)
+    l.pack(fill="both", expand="yes")
+    aInput()
+    bInput()
+    cInput()
+    sendButton()
+    window.mainloop()
+
+print(tkWIndow())
 
